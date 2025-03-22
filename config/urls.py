@@ -1,11 +1,11 @@
 from django.contrib import admin
-from django.urls import path, include  # Импортируем include для подключения других urls.py
-from django.conf import settings  # Добавляем импорт settings
-from django.conf.urls.static import static  # Добавляем импорт static
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('catalog/', include('catalog.urls')),
+    path('', include('catalog.urls')),  # Подключаем urls приложения catalog к корневому URL
 ]
 
 if settings.DEBUG:
