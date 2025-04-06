@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Удалить запись - ElectroHub{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Удалить запись</h1>
+        <p>Вы уверены, что хотите удалить запись "{{ blog_post.title }}"?</p>
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Удалить</button>
+            <a href="{% url 'blog:blog_detail' pk=blog_post.pk %}" class="btn btn-secondary">Отмена</a>
+        </form>
+    </div>
+{% endblock %}

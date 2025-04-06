@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Блог - ElectroHub{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Блог</h1>
+        <a href="{% url 'blog:blog_create' %}" class="btn btn-primary mb-3">Создать новую запись</a>
+
+        <div class="row">
+            {% for post in blog_posts %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        {% if post.preview %}
+                            <img src="" class="card-img-top" alt="{{ post.title }}" style="max-height: 200px; object-fit: contain;">
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ post.title }}</h5>
+                            <p class="card-text">{{ post.content|truncatechars:100 }}</p>
+                            <div class="mt-auto">
+                                <a href="{% url 'blog:blog_detail' pk=post.pk %}" class="btn btn-primary btn-sm">Подробнее</a>
+                                <a href="{% url 'blog:blog_update' pk=post.pk %}" class="btn btn-secondary btn-sm">Редактировать</a>
+                                <a href="{% url 'blog:blog_delete' pk=post.pk %}" class="btn btn-danger btn-sm">Удалить</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
