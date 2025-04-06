@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'catalog',  # <-- Добавьте свое приложения
     'crispy_forms', # <-- Добавлена работа с формами
-    'catalog', # <-- Добавьте свое приложения
+    'blog', # <-- Добавьте свое приложения
 ]
 
 MIDDLEWARE = [
