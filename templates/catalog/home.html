@@ -23,7 +23,7 @@
                             <p class="card-text">Категория: {{ product.category.name }}</p>
                             <p class="card-text">{{ product.description|truncatechars:100 }}</p>
                             <p class="card-text">Цена: {{ product.purchase_price }}</p>
-                            <a href="{% url 'product_detail' pk=product.pk %}" class="btn btn-primary mt-auto">Подробнее</a>
+                            <a href="{% url 'catalog:product_detail' pk=product.pk %}" class="btn btn-primary mt-auto">Подробнее</a>
                         </div>
                     </div>
                 </div>
@@ -31,5 +31,3 @@
         </div>
     </div>
 {% endblock %}
-
-Найти еще
