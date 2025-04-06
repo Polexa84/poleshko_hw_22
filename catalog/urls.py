@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+app_name = 'catalog'
+
 urlpatterns = [
     path('', views.index, name='home'),  # Главная страница
     path('contacts/', views.contact, name='contacts'),  # Страница контактов
