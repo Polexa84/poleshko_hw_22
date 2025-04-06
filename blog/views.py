@@ -30,7 +30,6 @@ class BlogUpdateView(UpdateView):
     model = BlogPost
     fields = ['title', 'content', 'preview', 'is_published']  # Укажите поля для формы
     template_name = 'blog/blog_form.html'  # Создайте этот шаблон
-    success_url = reverse_lazy('blog:blog_list')  # URL для перенаправления после успешного обновления
     context_object_name = 'blog_post'
 
 class BlogDeleteView(DeleteView):

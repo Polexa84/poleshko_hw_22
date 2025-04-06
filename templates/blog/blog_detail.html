@@ -1,14 +1,13 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load media_tags %}
 
 {% block title %}{{ blog_post.title }} - ElectroHub{% endblock %}
 
 {% block content %}
     <div class="container">
         <h1>{{ blog_post.title }}</h1>
-
         {% if blog_post.preview %}
-            <img src="" alt="{{ blog_post.title }}" class="img-fluid mb-3">
+            <img src="{{ blog_post.preview.url }}" class="card-img-top" alt="{{ blog_post.title }}" style="max-width: 300px;">
         {% endif %}
 
         <p>{{ blog_post.content }}</p>
