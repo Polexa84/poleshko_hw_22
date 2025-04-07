@@ -2,17 +2,39 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ContactForm
 from django.contrib import messages
 from .models import Product  # Импортируйте модель Product
+from django.views.generic import ListView, DetailView, TemplateView
 
+# Добавлен CBV ProductListView для главной страницы
+class ProductListView(ListView):
+    """
+    Отображает список последних продуктов на главной странице.
+    Наследуется от ListView.
+    """
+    model = Product  # Модель, которую используем для отображения
+    template_name = 'catalog/home.html'  # Шаблон для отображения
+    context_object_name = 'latest_products'  # Имя переменной в шаблоне
+    queryset = Product.objects.order_by('-created_at')[:5]  # Запрос для получения данных
 
-def index(request):
-    """Отображает главную страницу."""
-    latest_products = Product.objects.order_by('-created_at')[:5]
-    context = {'latest_products': latest_products}
-    return render(request, 'catalog/home.html', context)
+# Добавлен CBV ContactView для страницы контактов
+class ContactView(TemplateView):
+    """
+    Отображает страницу контактов и обрабатывает форму обратной связи.
+    Наследуется от TemplateView.
+    """
+    template_name = 'catalog/contacts.html'  # Шаблон для отображения
 
-def contact(request):
-    """Отображает страницу с контактной информацией и формой обратной связи."""
-    if request.method == 'POST':
+    def get_context_data(self, **kwargs):
+        """
+        Добавляет форму ContactForm в контекст шаблона.
+        """
+        context = super().get_context_data(**kwargs)
+        context['form'] = ContactForm()  # Передаем форму в контекст
+        return context
+
+    def post(self, request, *args, **kwargs):
+        """
+        Обрабатывает POST-запрос при отправке формы.
+        """
         form = ContactForm(request.POST)
         if form.is_valid():
             # Обработка данных формы
@@ -22,16 +44,21 @@ def contact(request):
 
             # Вывод сообщения об успехе
             messages.success(request, 'Сообщение успешно отправлено!')
-            print("Сообщение отправлено!")  # Добавляем отладочный вывод
+            print("Сообщение отправлено!")
 
             # Перенаправление на эту же страницу, чтобы сбросить форму
-            return redirect('contacts')
-    else:
-        form = ContactForm()
-    return render(request, 'catalog/contacts.html', {'form': form})
+            return redirect('catalog/contacts')
+        else:
+            context = self.get_context_data()
+            context['form'] = form
+            return self.render_to_response(context)
 
-
-def product_detail(request, pk):
-    """Отображает страницу с подробной информацией о продукте."""
-    product = get_object_or_404(Product, pk=pk)
-    return render(request, 'catalog/product_detail.html', {'product': product})
+# Добавлен CBV ProductDetailView для страницы деталей продукта
+class ProductDetailView(DetailView):
+    """
+    Отображает детальную информацию о продукте.
+    Наследуется от DetailView.
+    """
+    model = Product  # Модель, которую используем для отображения
+    template_name = 'catalog/product_detail.html'  # Шаблон для отображения
+    context_object_name = 'product'  # Имя переменной в шаблоне

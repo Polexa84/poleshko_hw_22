@@ -1,10 +1,10 @@
 from django.urls import path
-from . import views
+from .views import ProductListView, ContactView, ProductDetailView
 
-app_name = 'catalog'
+app_name = 'catalog'  # Добавляем пространство имен
 
 urlpatterns = [
-    path('', views.index, name='home'),  # Главная страница
-    path('contacts/', views.contact, name='contacts'),  # Страница контактов
-    path('product/<int:pk>/', views.product_detail, name='product_detail'),  # Страница с товарами
+    path('', ProductListView.as_view(), name='home'),
+    path('contacts/', ContactView.as_view(), name='contacts'),
+    path('product/<int:pk>/', ProductDetailView.as_view(), name='product_detail'),
 ]
