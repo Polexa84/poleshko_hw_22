@@ -1,9 +1,10 @@
 from django.urls import path
-from .views import ProductListView, ContactView, ProductDetailView  # Импортируем CBV
+from .views import ProductListView, ContactView, ProductDetailView
 
-# Обновлены URL для использования CBV
+app_name = 'catalog'  # Добавляем пространство имен
+
 urlpatterns = [
-    path('', ProductListView.as_view(), name='home'),  # Главная страница (CBV)
-    path('contacts/', ContactView.as_view(), name='contacts'),  # Страница контактов (CBV)
-    path('product/<int:pk>/', ProductDetailView.as_view(), name='product_detail'),  # Страница с товарами (CBV)
+    path('', ProductListView.as_view(), name='home'),
+    path('contacts/', ContactView.as_view(), name='contacts'),
+    path('product/<int:pk>/', ProductDetailView.as_view(), name='product_detail'),
 ]

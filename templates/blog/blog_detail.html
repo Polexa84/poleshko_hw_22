@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load media_tags %}
+
+{% block title %}{{ blog_post.title }} - ElectroHub{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{ blog_post.title }}</h1>
+        {% if blog_post.preview %}
+            <img src="{{ blog_post.preview.url }}" class="card-img-top" alt="{{ blog_post.title }}" style="max-width: 300px;">
+        {% endif %}
+
+        <p>{{ blog_post.content }}</p>
+
+        <p>Просмотров: {{ blog_post.views_count }}</p>
+        <p>Дата публикации: {{ blog_post.created_at|date:"d.m.Y H:i" }}</p>
+
+        <a href="{% url 'blog:blog_update' pk=blog_post.pk %}" class="btn btn-primary">Редактировать</a>
+        <a href="{% url 'blog:blog_delete' pk=blog_post.pk %}" class="btn btn-danger">Удалить</a>
+        <a href="{% url 'blog:blog_list' %}" class="btn btn-secondary">К списку записей</a>
+    </div>
+{% endblock %}

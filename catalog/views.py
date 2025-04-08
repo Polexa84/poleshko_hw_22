@@ -11,7 +11,7 @@ class ProductListView(ListView):
     Наследуется от ListView.
     """
     model = Product  # Модель, которую используем для отображения
-    template_name = 'home.html'  # Шаблон для отображения
+    template_name = 'catalog/home.html'  # Шаблон для отображения
     context_object_name = 'latest_products'  # Имя переменной в шаблоне
     queryset = Product.objects.order_by('-created_at')[:5]  # Запрос для получения данных
 
@@ -21,7 +21,7 @@ class ContactView(TemplateView):
     Отображает страницу контактов и обрабатывает форму обратной связи.
     Наследуется от TemplateView.
     """
-    template_name = 'contacts.html'  # Шаблон для отображения
+    template_name = 'catalog/contacts.html'  # Шаблон для отображения
 
     def get_context_data(self, **kwargs):
         """
@@ -47,7 +47,7 @@ class ContactView(TemplateView):
             print("Сообщение отправлено!")
 
             # Перенаправление на эту же страницу, чтобы сбросить форму
-            return redirect('contacts')
+            return redirect('catalog/contacts')
         else:
             context = self.get_context_data()
             context['form'] = form
@@ -60,5 +60,5 @@ class ProductDetailView(DetailView):
     Наследуется от DetailView.
     """
     model = Product  # Модель, которую используем для отображения
-    template_name = 'product_detail.html'  # Шаблон для отображения
+    template_name = 'catalog/product_detail.html'  # Шаблон для отображения
     context_object_name = 'product'  # Имя переменной в шаблоне
