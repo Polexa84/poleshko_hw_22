@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ContactForm
 from django.contrib import messages
 from .models import Product  # Импортируйте модель Product
-from django.views.generic import ListView, DetailView, TemplateView
+from django.views.generic import ListView, DetailView, TemplateView, CreateView, UpdateView
+from django.urls import reverse_lazy  # Импортируем reverse_lazy для создания URL-адресов
+from .forms import ProductForm
 
 # Добавлен CBV ProductListView для главной страницы
 class ProductListView(ListView):
@@ -62,3 +64,23 @@ class ProductDetailView(DetailView):
     model = Product  # Модель, которую используем для отображения
     template_name = 'catalog/product_detail.html'  # Шаблон для отображения
     context_object_name = 'product'  # Имя переменной в шаблоне
+
+class ProductCreateView(CreateView):
+    """
+    CBV для создания нового продукта.
+    Использует ProductForm для отображения полей и валидации данных.
+    """
+    model = Product  # Указываем модель, для которой создается объект
+    form_class = ProductForm  # Указываем форму, которая будет использоваться
+    template_name = 'catalog/product_form.html'  # Указываем шаблон для отображения формы создания
+    success_url = reverse_lazy('catalog:home')  # Указываем URL для перенаправления после успешного создания
+
+class ProductUpdateView(UpdateView):
+    """
+    CBV для обновления существующего продукта.
+    Использует ProductForm для отображения полей и валидации данных.
+    """
+    model = Product  # Указываем модель, объект которой будет обновляться
+    form_class = ProductForm  # Указываем форму, которая будет использоваться
+    template_name = 'catalog/product_form.html'  # Указываем шаблон для отображения формы обновления
+    success_url = reverse_lazy('catalog:home')  # Указываем URL для перенаправления после успешного обновления
