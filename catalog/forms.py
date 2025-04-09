@@ -41,10 +41,13 @@ class ProductForm(forms.ModelForm):
             'category': forms.Select(attrs={'class': 'form-control'}),
             'purchase_price': forms.NumberInput(attrs={'class': 'form-control'})
         }
-    def clean_honeypot(self):
-        if self.cleaned_data['honeypot']:
-            raise forms.ValidationError("Это поле должно быть пустым.")
-        return self.cleaned_data['honeypot']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field_name != 'honeypot':
+                if field_name in self.errors:
+                    self.fields[field_name].widget.attrs['class'] = field.widget.attrs.get('class', '') + ' is-invalid'
 
     def clean_name(self):
         """
@@ -69,3 +72,22 @@ class ProductForm(forms.ModelForm):
             if word in description:  # Проверяем, содержится ли запрещенное слово в описании
                 raise forms.ValidationError(f"Недопустимое слово '{word}' в описании продукта.")  # Выбрасываем исключение, если запрещенное слово найдено
         return self.cleaned_data['description']  # Возвращаем очищенное описание, если все проверки пройдены
+
+    def clean_purchase_price(self):
+        """
+        Валидация поля 'purchase_price'.
+        Проверяет, что цена продукта не может быть отрицательной.
+        """
+        price = self.cleaned_data['purchase_price']  # Получаем значение поля 'purchase_price'
+        if price <= 0:  # Если цена отрицательная
+            raise forms.ValidationError("Цена не может быть отрицательной или равна нулю.")  # Выбрасываем исключение с сообщением об ошибке
+        return price  # Возвращаем очищенное значение поля 'purchase_price'
+
+    def clean_honeypot(self):
+        """
+        Валидация поля 'honeypot'.
+        Проверяет, что поле 'honeypot' должно быть пустым (защита от спама).
+        """
+        if self.cleaned_data['honeypot']:  # Если поле 'honeypot' заполнено
+            raise forms.ValidationError("Это поле должно быть пустым.")  # Выбрасываем исключение с сообщением об ошибке
+        return self.cleaned_data['honeypot']  # Возвращаем очищенное значение поля 'honeypot'

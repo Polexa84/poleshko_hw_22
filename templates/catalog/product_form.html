@@ -1,18 +1,14 @@
-{# catalog/product_create.html или catalog/product_update.html #}
 {% extends 'base.html' %}
 
 {% block content %}
     <h1>{% if form.instance.pk %}Редактировать{% else %}Создать{% endif %} продукт</h1>
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" novalidate>
         {% csrf_token %}
 
         {# Honeypot для защиты от спама: #}
         <div style="display:none;">
-            {# Вывод ошибок honeypot (если есть): #}
             {{ form.honeypot.errors }}
-            {# Лейбл для honeypot (для доступности, но скрыт): #}
             <label>{{ form.honeypot.label }}</label>
-            {# Само поле honeypot (скрытое поле): #}
             {{ form.honeypot }}
         </div>
 

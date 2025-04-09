@@ -75,6 +75,13 @@ class ProductCreateView(CreateView):
     template_name = 'catalog/product_form.html'  # Указываем шаблон для отображения формы создания
     success_url = reverse_lazy('catalog:home')  # Указываем URL для перенаправления после успешного создания
 
+    def form_invalid(self, form):
+        # Выводим ошибки в консоль (для отладки)
+        print(form.errors)
+        # Возвращаем шаблон с формой и ошибками
+        return render(self.request, self.template_name, {'form': form})
+
+
 class ProductUpdateView(UpdateView):
     """
     CBV для обновления существующего продукта.
@@ -84,3 +91,9 @@ class ProductUpdateView(UpdateView):
     form_class = ProductForm  # Указываем форму, которая будет использоваться
     template_name = 'catalog/product_form.html'  # Указываем шаблон для отображения формы обновления
     success_url = reverse_lazy('catalog:home')  # Указываем URL для перенаправления после успешного обновления
+
+    def form_invalid(self, form):
+        # Выводим ошибки в консоль (для отладки)
+        print(form.errors)
+        # Возвращаем шаблон с формой и ошибками
+        return render(self.request, self.template_name, {'form': form})
