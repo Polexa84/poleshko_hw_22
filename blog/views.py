@@ -1,39 +1,58 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import BlogPost
+from .models import BlogPost  # Импортируем модель BlogPost
+from .forms import PostForm  # Импортируем форму PostForm
 from django.urls import reverse_lazy
 
 class BlogListView(ListView):
-    model = BlogPost
-    template_name = 'blog/blog_list.html'  # Создайте этот шаблон
-    context_object_name = 'blog_posts'
-    queryset = BlogPost.objects.filter(is_published=True).order_by('-created_at') # Только опубликованные
+    """
+    Представление для отображения списка постов блога.
+    """
+    model = BlogPost  # Используем модель BlogPost
+    template_name = 'blog/blog_list.html'  # Указываем шаблон для отображения
+    context_object_name = 'blog_posts'  # Имя переменной в контексте, содержащей список постов
+    queryset = BlogPost.objects.filter(is_published=True).order_by('-created_at')  # Получаем только опубликованные посты, отсортированные по дате создания
 
 class BlogDetailView(DetailView):
-    model = BlogPost
-    template_name = 'blog/blog_detail.html'  # Создайте этот шаблон
-    context_object_name = 'blog_post'
+    """
+    Представление для отображения детальной информации о посте блога.
+    """
+    model = BlogPost  # Используем модель BlogPost
+    template_name = 'blog/blog_detail.html'  # Указываем шаблон для отображения
+    context_object_name = 'blog_post'  # Имя переменной в контексте, содержащей информацию о посте
 
     def get_object(self, queryset=None):
-        obj = super().get_object(queryset=queryset)
-        obj.views_count += 1
-        obj.save()
-        return obj
+        """
+        Переопределение метода get_object для увеличения счетчика просмотров.
+        """
+        obj = super().get_object(queryset=queryset)  # Получаем объект
+        obj.views_count += 1  # Увеличиваем счетчик просмотров
+        obj.save()  # Сохраняем объект
+        return obj  # Возвращаем объект
 
 class BlogCreateView(CreateView):
-    model = BlogPost
-    fields = ['title', 'content', 'preview', 'is_published']  # Укажите поля для формы
-    template_name = 'blog/blog_form.html'  # Создайте этот шаблон
+    """
+    Представление для создания нового поста блога.
+    """
+    model = BlogPost  # Используем модель BlogPost
+    form_class = PostForm  # Используем форму PostForm
+    template_name = 'blog/blog_form.html'  # Указываем шаблон для отображения
     success_url = reverse_lazy('blog:blog_list')  # URL для перенаправления после успешного создания
 
 class BlogUpdateView(UpdateView):
-    model = BlogPost
-    fields = ['title', 'content', 'preview', 'is_published']  # Укажите поля для формы
-    template_name = 'blog/blog_form.html'  # Создайте этот шаблон
+    """
+    Представление для редактирования поста блога.
+    """
+    model = BlogPost  # Используем модель BlogPost
+    form_class = PostForm  # Используем форму PostForm
+    template_name = 'blog/blog_form.html'  # Указываем шаблон для отображения
     context_object_name = 'blog_post'
 
 class BlogDeleteView(DeleteView):
-    model = BlogPost
-    template_name = 'blog/blog_confirm_delete.html'  # Создайте этот шаблон
+    """
+    Представление для удаления поста блога.
+    """
+    model = BlogPost  # Используем модель BlogPost
+    template_name = 'blog/blog_confirm_delete.html'  # Указываем шаблон для отображения
     success_url = reverse_lazy('blog:blog_list')  # URL для перенаправления после успешного удаления
     context_object_name = 'blog_post'

@@ -15,6 +15,7 @@
         <p>Цена: {{ product.purchase_price }}</p>
         <p>Категория: {{ product.category.name }}</p>
 
-        <button>Купить</button>
+        <a href="{% url 'catalog:product_update' pk=product.pk %}" class="btn btn-primary">Редактировать</a>
+        <button class="btn btn-success">Купить</button>
     </div>
 {% endblock %}
