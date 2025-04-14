@@ -34,6 +34,8 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+AUTH_USER_MODEL = 'users.User'
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -44,6 +46,7 @@ INSTALLED_APPS = [
     'catalog',  # <-- Добавьте свое приложения
     'crispy_forms', # <-- Добавлена работа с формами
     'blog', # <-- Добавьте свое приложения
+    'users',
 ]
 
 MIDDLEWARE = [
