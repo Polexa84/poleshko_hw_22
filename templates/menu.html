@@ -1,5 +1,17 @@
-<nav class="ms-5">
-    <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:home' %}">Каталог</a>  <!-- Исправлено -->
-    <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:contacts' %}">Контакты</a>  <!-- Исправлено -->
-    <a class="p-2 btn btn-outline-primary" href="{% url 'blog:blog_list' %}">Блог</a>  <!-- Добавлена ссылка на блог -->
-</nav>
+<div class="d-flex align-items-center justify-content-between w-100">
+    <div>
+        <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:home' %}">Каталог</a>
+        <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:contacts' %}">Контакты</a>
+        <a class="p-2 btn btn-outline-primary" href="{% url 'blog:blog_list' %}">Блог</a>
+    </div>
+
+    <div>
+        {% if user.is_authenticated %}
+            <span>Здравствуйте, {{ user.username }}!</span>
+            <a class="btn btn-danger" href="{% url 'users:logout' %}">Выйти</a>  <!-- Изменено на красный -->
+        {% else %}
+            <a class="btn btn-success" href="{% url 'users:login' %}">Войти</a>
+            <a class="btn btn-primary" href="{% url 'users:register' %}">Регистрация</a>
+        {% endif %}
+    </div>
+</div>
