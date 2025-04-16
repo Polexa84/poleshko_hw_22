@@ -33,6 +33,14 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # Application definition
+AUTHENTICATION_BACKENDS = [
+    'users.backends.CustomAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+AUTH_USER_MODEL = 'users.User'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -44,12 +52,15 @@ INSTALLED_APPS = [
     'catalog',  # <-- Добавьте свое приложения
     'crispy_forms', # <-- Добавлена работа с формами
     'blog', # <-- Добавьте свое приложения
+    'users',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -96,6 +107,14 @@ DATABASES = {
         'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
 }
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -119,7 +138,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
+
+LANGUAGES = [
+    ('ru', 'Russian'),
+    ('en', 'English'),
+]
 
 TIME_ZONE = 'UTC'
 
@@ -145,3 +169,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 TEMPLATE_DIRS = [
     os.path.join(BASE_DIR, 'catalog', 'templates'),
 ]
+
+LOGIN_URL = 'users:login'
