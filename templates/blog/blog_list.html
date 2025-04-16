@@ -5,8 +5,13 @@
 
 {% block content %}
     <div class="container">
-        <h1>Блог</h1>
-        <a href="{% url 'blog:blog_create' %}" class="btn btn-primary mb-3">Создать новую запись</a>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1>Блог</h1>
+            {% if user.is_authenticated and can_add_post %}
+                <a href="{% url 'blog:blog_create' %}" class="btn btn-success">Создать новую запись</a>
+            {% endif %}
+        </div>
+
 
         <div class="row">
             {% for post in blog_posts %}
@@ -20,8 +25,6 @@
                             <p class="card-text">{{ post.content|truncatechars:100 }}</p>
                             <div class="mt-auto">
                                 <a href="{% url 'blog:blog_detail' pk=post.pk %}" class="btn btn-primary btn-sm">Подробнее</a>
-                                <a href="{% url 'blog:blog_update' pk=post.pk %}" class="btn btn-secondary btn-sm">Редактировать</a>
-                                <a href="{% url 'blog:blog_delete' pk=post.pk %}" class="btn btn-danger btn-sm">Удалить</a>
                             </div>
                         </div>
                     </div>

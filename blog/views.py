@@ -13,6 +13,12 @@ class BlogListView(ListView):
     context_object_name = 'blog_posts'  # Имя переменной в контексте, содержащей список постов
     queryset = BlogPost.objects.filter(is_published=True).order_by('-created_at')  # Получаем только опубликованные посты, отсортированные по дате создания
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['can_add_post'] = user.has_perm('blog.add_blogpost')
+        return context
+
 class BlogDetailView(DetailView):
     """
     Представление для отображения детальной информации о посте блога.
@@ -21,14 +27,13 @@ class BlogDetailView(DetailView):
     template_name = 'blog/blog_detail.html'  # Указываем шаблон для отображения
     context_object_name = 'blog_post'  # Имя переменной в контексте, содержащей информацию о посте
 
-    def get_object(self, queryset=None):
-        """
-        Переопределение метода get_object для увеличения счетчика просмотров.
-        """
-        obj = super().get_object(queryset=queryset)  # Получаем объект
-        obj.views_count += 1  # Увеличиваем счетчик просмотров
-        obj.save()  # Сохраняем объект
-        return obj  # Возвращаем объект
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['can_edit'] = user.has_perm('blog.change_blogpost')
+        context['can_delete'] = user.has_perm('blog.delete_blogpost')
+        context['can_publish'] = user.has_perm('blog.can_publish_blogpost')
+        return context
 
 class BlogCreateView(CreateView):
     """
