@@ -89,12 +89,19 @@ class ProductCreateView(LoginRequiredMixin, CreateView):  # Добавляем L
     template_name = 'catalog/product_form.html'  # Указываем шаблон для отображения формы создания
     success_url = reverse_lazy('catalog:home')  # Указываем URL для перенаправления после успешного создания
 
+    def form_valid(self, form):
+        """
+        Устанавливает владельца продукта текущим пользователем.
+        """
+        form.instance.owner = self.request.user  # Назначение владельца
+        return super().form_valid(form) # Важно: Вызвать метод form_valid из родительского класса
+
+
     def form_invalid(self, form):
         # Выводим ошибки в консоль (для отладки)
         print(form.errors)
         # Возвращаем шаблон с формой и ошибками
         return render(self.request, self.template_name, {'form': form})
-
 
 class ProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView): # Добавляем LoginRequiredMixin и PermissionRequiredMixin
     """

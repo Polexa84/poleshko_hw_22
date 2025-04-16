@@ -1,8 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import Permission
-from django.contrib.contenttypes.models import ContentType
-from django.apps import apps
-
+from django.contrib.auth import get_user_model # Импорт get_user_model
+#from django.conf import settings # Убери, если не нужно
 
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name='Наименование')
@@ -25,7 +23,15 @@ class Product(models.Model):
     purchase_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена за покупку')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата последнего изменения')
-    is_published = models.BooleanField(default=False, verbose_name="Опубликовано")  # Добавлено поле
+    is_published = models.BooleanField(default=False, verbose_name="Опубликовано")
+
+    owner = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        related_name='products',
+        verbose_name='Владелец',
+        default=1
+    )
 
     def __str__(self):
         return self.name
