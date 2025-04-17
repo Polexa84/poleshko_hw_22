@@ -18,3 +18,6 @@ class BlogPost(models.Model):
     class Meta:
         verbose_name = 'Блоговая запись'
         verbose_name_plural = 'Блоговые записи'
+        permissions = [
+            ("can_publish_blogpost", "Can publish blog post"),
+        ]

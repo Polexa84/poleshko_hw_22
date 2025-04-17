@@ -2,9 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ContactForm
 from django.contrib import messages
 from .models import Product  # Импортируйте модель Product
-from django.views.generic import ListView, DetailView, TemplateView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, TemplateView, CreateView, UpdateView, DeleteView  # Добавил DeleteView
 from django.urls import reverse_lazy  # Импортируем reverse_lazy для создания URL-адресов
 from .forms import ProductForm
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin  # Импортируем LoginRequiredMixin и PermissionRequiredMixin
 
 # Добавлен CBV ProductListView для главной страницы
 class ProductListView(ListView):
@@ -16,6 +17,12 @@ class ProductListView(ListView):
     template_name = 'catalog/home.html'  # Шаблон для отображения
     context_object_name = 'latest_products'  # Имя переменной в шаблоне
     queryset = Product.objects.order_by('-created_at')[:5]  # Запрос для получения данных
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['can_add_product'] = user.has_perm('catalog.add_product')
+        return context
 
 # Добавлен CBV ContactView для страницы контактов
 class ContactView(TemplateView):
@@ -65,7 +72,14 @@ class ProductDetailView(DetailView):
     template_name = 'catalog/product_detail.html'  # Шаблон для отображения
     context_object_name = 'product'  # Имя переменной в шаблоне
 
-class ProductCreateView(CreateView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['can_unpublish'] = user.has_perm('catalog.can_unpublish_product')
+        context['can_delete'] = user.has_perm('catalog.delete_product')
+        return context
+
+class ProductCreateView(LoginRequiredMixin, CreateView):  # Добавляем LoginRequiredMixin
     """
     CBV для создания нового продукта.
     Использует ProductForm для отображения полей и валидации данных.
@@ -75,14 +89,21 @@ class ProductCreateView(CreateView):
     template_name = 'catalog/product_form.html'  # Указываем шаблон для отображения формы создания
     success_url = reverse_lazy('catalog:home')  # Указываем URL для перенаправления после успешного создания
 
+    def form_valid(self, form):
+        """
+        Устанавливает владельца продукта текущим пользователем.
+        """
+        form.instance.owner = self.request.user  # Назначение владельца
+        return super().form_valid(form) # Важно: Вызвать метод form_valid из родительского класса
+
+
     def form_invalid(self, form):
         # Выводим ошибки в консоль (для отладки)
         print(form.errors)
         # Возвращаем шаблон с формой и ошибками
         return render(self.request, self.template_name, {'form': form})
 
-
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView): # Добавляем LoginRequiredMixin и PermissionRequiredMixin
     """
     CBV для обновления существующего продукта.
     Использует ProductForm для отображения полей и валидации данных.
@@ -91,9 +112,16 @@ class ProductUpdateView(UpdateView):
     form_class = ProductForm  # Указываем форму, которая будет использоваться
     template_name = 'catalog/product_form.html'  # Указываем шаблон для отображения формы обновления
     success_url = reverse_lazy('catalog:home')  # Указываем URL для перенаправления после успешного обновления
+    permission_required = 'catalog.can_unpublish_product' # Указываем необходимое разрешение
 
     def form_invalid(self, form):
         # Выводим ошибки в консоль (для отладки)
         print(form.errors)
         # Возвращаем шаблон с формой и ошибками
         return render(self.request, self.template_name, {'form': form})
+
+class ProductDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    model = Product
+    template_name = 'catalog/product_confirm_delete.html'
+    success_url = reverse_lazy('catalog:home')
+    permission_required = 'catalog.delete_product'
