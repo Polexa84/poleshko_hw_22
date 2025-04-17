@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ContactForm
 from django.contrib import messages
-from .models import Product  # Импортируйте модель Product
+from .models import Product, Category  # Импортируйте модель Product и Category
 from django.views.generic import ListView, DetailView, TemplateView, CreateView, UpdateView, DeleteView  # Добавил DeleteView
 from django.urls import reverse_lazy  # Импортируем reverse_lazy для создания URL-адресов
 from .forms import ProductForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin  # Импортируем LoginRequiredMixin и PermissionRequiredMixin
+from .services import get_products_by_category  # Импортируем сервисную функцию
 
 # Добавлен CBV ProductListView для главной страницы
 class ProductListView(ListView):
@@ -20,6 +21,8 @@ class ProductListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['latest_products'] = Product.objects.order_by('-created_at')[:5]
+        context['categories'] = Category.objects.all()  # Получаем все категории
         user = self.request.user
         context['can_add_product'] = user.has_perm('catalog.add_product')
         return context
@@ -62,7 +65,6 @@ class ContactView(TemplateView):
             context['form'] = form
             return self.render_to_response(context)
 
-# Добавлен CBV ProductDetailView для страницы деталей продукта
 class ProductDetailView(DetailView):
     """
     Отображает детальную информацию о продукте.
@@ -125,3 +127,16 @@ class ProductDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView)
     template_name = 'catalog/product_confirm_delete.html'
     success_url = reverse_lazy('catalog:home')
     permission_required = 'catalog.delete_product'
+
+def product_list_by_category(request, category_id):
+    """
+    Отображает список продуктов в указанной категории.
+    """
+    category = get_object_or_404(Category, pk=category_id)  # Получаем категорию или возвращаем 404
+    products = get_products_by_category(category_id)  # Используем сервисную функцию
+
+    context = {
+        'category': category,
+        'products': products,
+    }
+    return render(request, 'catalog/product_list_by_category.html', context)

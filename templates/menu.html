@@ -1,8 +1,18 @@
 <div class="d-flex align-items-center justify-content-between w-100">
     <div>
-        <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:home' %}">Каталог</a>
-        <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:contacts' %}">Контакты</a>
-        <a class="p-2 btn btn-outline-primary" href="{% url 'blog:blog_list' %}">Блог</a>
+        <div class="d-flex flex-column">  {# Flex-контейнер для вертикального расположения #}
+            <div>  {# Контейнер для основных кнопок #}
+                <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:home' %}">Каталог</a>
+                <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:contacts' %}">Контакты</a>
+                <a class="p-2 btn btn-outline-primary" href="{% url 'blog:blog_list' %}">Блог</a>
+            </div>
+
+            <div class="mt-2">  {# Контейнер для кнопок категорий с отступом сверху #}
+                {% for category in categories %}
+                    <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:product_list_by_category' category.pk %}">{{ category.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 
     <div>

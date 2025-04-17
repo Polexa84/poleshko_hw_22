@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth import get_user_model # Импорт get_user_model
-#from django.conf import settings # Убери, если не нужно
 
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name='Наименование')
