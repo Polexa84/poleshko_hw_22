@@ -5,16 +5,19 @@
 
 {% block content %}
     <div class="container">
-        <h1>{{ product.name }}</h1>
+        {% load cache %}
+        {% cache 60 * 15 product_detail product.pk %}
+            <h1>{{ product.name }}</h1>
 
-        {% if product.image %}
-            <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width: 300px;">
-        {% endif %}
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width: 300px;">
+            {% endif %}
 
-        <p>Описание: {{ product.description }}</p>
-        <p>Цена: {{ product.purchase_price }}</p>
-        <p>Категория: {{ product.category.name }}</p>
-        <p>Владелец: {{ product.owner }}</p>  {# Добавлена информация о владельце #}
+            <p>Описание: {{ product.description }}</p>
+            <p>Цена: {{ product.purchase_price }}</p>
+            <p>Категория: {{ product.category.name }}</p>
+            <p>Владелец: {{ product.owner }}</p>
+        {% endcache %}
 
         {% if user.is_authenticated and user == product.owner or user.is_staff %}
             <a href="{% url 'catalog:product_update' pk=product.pk %}" class="btn btn-primary">Редактировать</a>
@@ -25,6 +28,5 @@
         {% endif %}
 
         <button class="btn btn-success">Купить</button>
-
     </div>
 {% endblock %}
