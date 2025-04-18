@@ -1,0 +1,9 @@
+{% extends 'base_product_list.html' %}
+
+{% block title %}{{ category.name }} - ElectroHub{% endblock %}
+
+{% block content %}
+    {% with title='Товары из категории '|add:category.name products=products %}
+        {{ block.super }}
+    {% endwith %}
+{% endblock %}

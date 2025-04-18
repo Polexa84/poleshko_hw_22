@@ -171,3 +171,18 @@ TEMPLATE_DIRS = [
 ]
 
 LOGIN_URL = 'users:login'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'CONNECTION_POOL_KWARGS': {
+                'max_connections': 100
+            },
+            'DECODE_RESPONSES': True, # decode_responses=True означает, что данные, хранящиеся в redis, будут автоматически декодированы из байтов в строки
+            'PICKLE_VERSION': -1, # используем самую последнюю версию pickle
+        }
+    }
+}
